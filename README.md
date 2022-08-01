@@ -1,2 +1,2 @@
 # java-shareit
-Template repository for Shareit project.
+This is 13th sprint homework.

@@ -2,6 +2,8 @@ package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.UserDto;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.List;
@@ -18,8 +20,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public ItemDto createItem(long userId, ItemDto itemDto) {
-        userRepository.getUser(userId);
-        return itemRepository.createItem(userId, itemDto);
+        UserDto userDto = userRepository.getUser(userId);
+        return itemRepository.createItem(UserMapper.toExistingUser(userDto), itemDto);
     }
 
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {

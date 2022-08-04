@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,15 +18,15 @@ public class InMemoryItemRepository implements ItemRepository {
     private final Map<Long, Item> repository = new HashMap<>();
 
     @Override
-    public ItemDto createItem(long userId, ItemDto itemDto) {
-        Item item = ItemMapper.toItem(userId, itemDto);
+    public ItemDto createItem(User user, ItemDto itemDto) {
+        Item item = ItemMapper.toItem(user, itemDto);
         repository.put(item.getId(), item);
         return ItemMapper.toItemDto(item);
     }
 
     @Override
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
-        if (repository.get(itemId).getOwner() != userId) {
+        if (repository.get(itemId).getOwner().getId() != userId) {
             throw new ItemNotFoundException(
                     String.format("Пользователь с id=%d не владеет вещью с id=%d", userId, itemId));
         }
@@ -59,7 +60,7 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public List<ItemDto> getAllItems(long userId) {
         return repository.values().stream()
-                .filter(x -> x.getOwner() == userId)
+                .filter(x -> x.getOwner().getId() == userId)
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }

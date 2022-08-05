@@ -2,23 +2,19 @@ package ru.practicum.shareit.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import ru.practicum.shareit.validation.UserUpdate;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 
-@Data
 @AllArgsConstructor
-public class User {
-    private static long userId = 1;
-
+@Data
+public class UserDto {
     private long id;
     @NotNull
     private String name;
-    @Email
+    @Email(groups = {UserUpdate.class, Default.class})
     @NotNull
     private String email;
-
-    public static long generateId() {
-        return userId++;
-    }
 }

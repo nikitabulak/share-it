@@ -1,42 +1,58 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
-    private final UserService userRepository;
+    private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserService userRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
     }
 
-    public ItemDto getItem(long itemId) {
-        return ItemMapper.toItemDto(itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Вещь с таким id не найдена!")));
+    public ItemWithBookingDto getItem(long userId, long itemId) {
+        List<Booking> itemBookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
+        BookingDto nextBooking = null;
+        BookingDto lastBooking = null;
+        if (!itemBookings.isEmpty()) {
+            if (itemRepository.findById(itemId).get().getOwner().getId() == userId) {
+                nextBooking = BookingMapper.toBookingDto(itemBookings.get(0));
+                lastBooking = BookingMapper.toBookingDto(itemBookings.get(itemBookings.size() - 1));
+            }
+        }
+        return ItemMapper.toItemWithBookingDto(itemRepository.findById(itemId)
+                .orElseThrow(() -> new ItemNotFoundException("Вещь с таким id не найдена!")), nextBooking, lastBooking);
     }
 
     public ItemDto createItem(long userId, ItemDto itemDto) {
-        Item item = itemRepository.save(ItemMapper.toItem(UserMapper.toUser(userRepository.getUser(userId)), itemDto));
+        Item item = itemRepository.save(ItemMapper.toItem(userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с таким id не найден!")), itemDto));
         return ItemMapper.toItemDto(item);
     }
 
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Вещь с таким id не найдена!"));
-        System.out.println(item);
         if (item.getOwner().getId() != userId) {
             throw new UserNotFoundException(
                     String.format("Пользователь с id=%d не владеет вещью с id=%d", userId, itemId));
@@ -53,11 +69,11 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
-    public List<ItemDto> getAllItems(long userId) {
-        userRepository.getUser(userId);
+    public List<ItemWithBookingDto> getAllItems(long userId) {
         return itemRepository.findAll().stream()
                 .filter(x -> x.getOwner().getId() == userId)
-                .map(ItemMapper::toItemDto)
+                .map(x -> getItem(userId, x.getId()))
+                .sorted(Comparator.comparingLong(ItemWithBookingDto::getId))
                 .collect(Collectors.toList());
     }
 

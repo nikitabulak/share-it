@@ -1,30 +1,34 @@
 package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.List;
+
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
+    public static ItemDto toItemDto(Item item, List<CommentDto> comments) {
         return new ItemDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.isAvailable()
+                item.isAvailable(),
+                comments
         );
     }
 
-    public static ItemWithBookingDto toItemWithBookingDto(Item item, BookingDto nextBooking, BookingDto lastBooking) {
+    public static ItemWithBookingDto toItemWithBookingDto(Item item, BookingDto nextBooking, BookingDto lastBooking, List<CommentDto> comments) {
         return new ItemWithBookingDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.isAvailable(),
                 nextBooking,
-                lastBooking
+                lastBooking,
+                comments
         );
     }
 

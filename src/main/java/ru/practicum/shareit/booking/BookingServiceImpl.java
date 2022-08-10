@@ -42,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с таким id не найден!"));
-        if(user.equals(item.getOwner())){
+        if (user.equals(item.getOwner())) {
             throw new UserNotFoundException("Владелец вещи не может её забронировать!");
         }
         if (bookingDto.getStart().isBefore(LocalDateTime.now()) || bookingDto.getEnd().isBefore(bookingDto.getStart())) {
@@ -63,7 +63,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking updateBooking(long userId, long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Бронирование с таким id не найдено!"));
-        if(booking.getStatus().equals(Status.APPROVED)){
+        if (booking.getStatus().equals(Status.APPROVED)) {
             throw new IllegalArgumentException("Booking is already approved!");
         }
         if (userId == booking.getItem().getOwner().getId()) {
@@ -82,9 +82,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking getBooking(long userId, long bookingId) {
-         Booking booking = bookingRepository.findById(bookingId)
+        Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Бронирование с таким id не найдено!"));
-        if(booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId){
+        if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
             return booking;
         } else {
             throw new BookingNotFoundException("Неверный id пользователя!");
@@ -111,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
                 default:
                     return new ArrayList<>();
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unknown state: " + state);
         }
     }
@@ -136,7 +136,7 @@ public class BookingServiceImpl implements BookingService {
                 default:
                     return new ArrayList<>();
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unknown state: " + state);
         }
     }

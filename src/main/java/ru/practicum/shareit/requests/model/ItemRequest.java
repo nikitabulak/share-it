@@ -1,9 +1,8 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.requests.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.requests.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.CascadeType;
@@ -13,32 +12,28 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "items")
-public class Item {
+@Table(name = "requests")
+public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotNull
     @NotBlank
-    private String name;
+    private long description;
     @NotNull
-    @NotBlank
-    private String description;
-    private boolean available;
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private User owner;
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "request_id", referencedColumnName = "id")
-    private ItemRequest request;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "requestor_id", referencedColumnName = "id")
+    private User requestor;
+    @NotNull
+    private LocalDateTime created;
 
 }

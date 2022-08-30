@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler
+    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
+    public ErrorResponse handleNotFoundException(final RuntimeException e) {
         return new ErrorResponse(
                 e.getMessage()
         );
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleItemNotFoundException(final ItemNotFoundException e) {
+    @ExceptionHandler({ItemNotAvailableException.class, WrongStartOrEndTimeException.class, IllegalArgumentException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotAvailableException(final RuntimeException e) {
         return new ErrorResponse(
                 e.getMessage()
         );

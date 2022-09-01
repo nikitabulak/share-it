@@ -1,16 +1,13 @@
 package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.enums.State;
 import ru.practicum.shareit.enums.Status;
-import ru.practicum.shareit.exception.BookingNotFoundException;
-import ru.practicum.shareit.exception.ItemNotAvailableException;
-import ru.practicum.shareit.exception.ItemNotFoundException;
-import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.exception.WrongStartOrEndTimeException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -92,12 +89,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllBookings(long userId, String state) {
+    public List<Booking> getAllBookings(long userId, String state, Pageable pageable) {
+        // Возможно заменить на if(userRepository.existsById(userId)){} else {new UserNotFoundException("Пользователь с таким id не найден!");}
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь с таким id не найден!"));
         try {
             switch (State.valueOf(state)) {
                 case ALL:
-                    return bookingRepository.findByBookerIdOrderByStartDesc(userId);
+                    return bookingRepository.findByBookerIdOrderByStartDesc(userId, pageable);
                 case WAITING:
                     return bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
                 case REJECTED:
@@ -117,12 +115,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllBookingsForOwner(long userId, String state) {
+    public List<Booking> getAllBookingsForOwner(long userId, String state, Pageable pageable) {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь с таким id не найден!"));
         try {
             switch (State.valueOf(state)) {
                 case ALL:
-                    return bookingRepository.findByItemOwnerIdOrderByStartDesc(userId);
+                    return bookingRepository.findByItemOwnerIdOrderByStartDesc(userId, pageable);
                 case WAITING:
                     return bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
                 case REJECTED:

@@ -53,7 +53,8 @@ public class BookingServiceImpl implements BookingService {
                         user,
                         Status.WAITING)
         );
-        return bookingRepository.save(booking);
+        return booking;
+//        return bookingRepository.save(booking);
     }
 
     @Override
@@ -72,8 +73,7 @@ public class BookingServiceImpl implements BookingService {
         } else {
             throw new BookingNotFoundException("Неверный id пользователя!");
         }
-        booking = bookingRepository.save(booking);
-        return booking;
+        return bookingRepository.save(booking);
     }
 
 

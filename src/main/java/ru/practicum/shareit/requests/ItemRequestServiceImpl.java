@@ -53,8 +53,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                     .peek(x -> x.setItems(
                             itemRepository.findByRequestIdOrderByIdAsc(x.getId()).stream()
                                     .map(y -> ItemMapper.toItemDto(y, new ArrayList<>()))
-                                    .collect(Collectors.toList())
-                    ))
+                                    .collect(Collectors.toList())))
                     .sorted(Comparator.comparing(ItemRequestDto::getCreated))
                     .collect(Collectors.toList());
         } else {

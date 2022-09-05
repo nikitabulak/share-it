@@ -85,16 +85,50 @@ public class BookingServiceImplTest {
     @Test
     void getAllBookings() {
         Mockito.when(userRepository.findById(anyLong())).thenReturn(Optional.of(userBooker));
+
+        Mockito.when(bookingRepository.findByBookerIdOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookings(userOwner.getId(), "ALL", PageRequest.of(1, 1)));
+
         Mockito.when(bookingRepository.findByBookerIdAndStatusOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
         Assertions.assertEquals(List.of(booking), bookingService.getAllBookings(userOwner.getId(), "WAITING", PageRequest.of(1, 1)));
+
+        Mockito.when(bookingRepository.findByBookerIdAndStatusOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookings(userOwner.getId(), "REJECTED", PageRequest.of(1, 1)));
+
+        Mockito.when(bookingRepository.findByBookerIdAndEndBeforeOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookings(userOwner.getId(), "PAST", PageRequest.of(1, 1)));
+
+        Mockito.when(bookingRepository.findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(anyLong(), any(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookings(userOwner.getId(), "CURRENT", PageRequest.of(1, 1)));
+
+        Mockito.when(bookingRepository.findByBookerIdAndStartAfterOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookings(userOwner.getId(), "FUTURE", PageRequest.of(1, 1)));
+
         Assertions.assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookings(userOwner.getId(), "test", PageRequest.of(1, 1)));
     }
 
     @Test
     void getAllBookingsForOwner() {
         Mockito.when(userRepository.findById(anyLong())).thenReturn(Optional.of(userOwner));
+
+        Mockito.when(bookingRepository.findByItemOwnerIdOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookingsForOwner(userOwner.getId(), "ALL", PageRequest.of(1, 1)));
+
         Mockito.when(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
         Assertions.assertEquals(List.of(booking), bookingService.getAllBookingsForOwner(userOwner.getId(), "WAITING", PageRequest.of(1, 1)));
+
+        Mockito.when(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookingsForOwner(userOwner.getId(), "REJECTED", PageRequest.of(1, 1)));
+
+        Mockito.when(bookingRepository.findByItemOwnerIdAndEndBeforeOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookingsForOwner(userOwner.getId(), "PAST", PageRequest.of(1, 1)));
+
+        Mockito.when(bookingRepository.findByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(anyLong(), any(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookingsForOwner(userOwner.getId(), "CURRENT", PageRequest.of(1, 1)));
+
+        Mockito.when(bookingRepository.findByItemOwnerIdAndStartAfterOrderByStartDesc(anyLong(), any())).thenReturn(List.of(booking));
+        Assertions.assertEquals(List.of(booking), bookingService.getAllBookingsForOwner(userOwner.getId(), "FUTURE", PageRequest.of(1, 1)));
+
         Assertions.assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsForOwner(userOwner.getId(), "test", PageRequest.of(1, 1)));
     }
 }

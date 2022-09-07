@@ -1,17 +1,10 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.pageable.OffsetLimitPageable;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,13 +36,17 @@ public class BookingController {
 
     @GetMapping
     public List<Booking> getAllBookings(@RequestHeader("X-Sharer-User-Id") long userId,
-                                        @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingService.getAllBookings(userId, state);
+                                        @RequestParam(required = false, defaultValue = "ALL") String state,
+                                        @RequestParam(required = false, defaultValue = "0") long from,
+                                        @RequestParam(required = false, defaultValue = "20") long size) {
+        return bookingService.getAllBookings(userId, state, OffsetLimitPageable.of((int) from, (int) size));
     }
 
     @GetMapping("/owner")
     public List<Booking> getAllBookingsForOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingsForOwner(userId, state);
+                                                @RequestParam(required = false, defaultValue = "ALL") String state,
+                                                @RequestParam(required = false, defaultValue = "0") long from,
+                                                @RequestParam(required = false, defaultValue = "20") long size) {
+        return bookingService.getAllBookingsForOwner(userId, state, OffsetLimitPageable.of((int) from, (int) size));
     }
 }

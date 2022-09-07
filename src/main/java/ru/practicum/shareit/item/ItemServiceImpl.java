@@ -6,12 +6,14 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.requests.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -24,13 +26,16 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemRequestRepository itemRequestRepository;
+
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, ItemRequestRepository itemRequestRepository, BookingRepository bookingRepository, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.itemRequestRepository = itemRequestRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
     }
@@ -50,8 +55,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public ItemDto createItem(long userId, ItemDto itemDto) {
-        Item item = itemRepository.save(ItemMapper.toItem(userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с таким id не найден!")), itemDto));
+        Item item;
+        if (itemDto.getRequestId() == null) {
+            item = itemRepository.save(ItemMapper.toItem(userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException("Пользователь с таким id не найден!")), itemDto));
+        } else {
+            item = itemRepository.save(ItemMapper.toItemWithRequest(userRepository.findById(userId)
+                            .orElseThrow(() -> new UserNotFoundException("Пользователь с таким id не найден!")), itemDto,
+                    itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(() -> new ItemRequestNotFoundException("Запрос вещи с таким id не найден!"))));
+        }
         return ItemMapper.toItemDto(item, new ArrayList<>());
     }
 

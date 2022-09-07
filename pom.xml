@@ -87,7 +87,15 @@
 					</excludes>
 				</configuration>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -146,6 +154,10 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.8</version>
 					<configuration>
+						<excludes>
+							<exclude>**/exception/*</exclude>
+							<exclude>**/pageable/*</exclude>
+						</excludes>
 						<output>file</output>
 					</configuration>
 					<executions>
@@ -178,17 +190,17 @@
 											<limit>
 												<counter>BRANCH</counter>
 												<value>COVEREDRATIO</value>
-												<minimum>0.9</minimum>
+												<minimum>0.6</minimum>
 											</limit>
 											<limit>
 												<counter>COMPLEXITY</counter>
 												<value>COVEREDRATIO</value>
-												<minimum>0.9</minimum>
+												<minimum>0.6</minimum>
 											</limit>
 											<limit>
 												<counter>METHOD</counter>
 												<value>COVEREDRATIO</value>
-												<minimum>0.9</minimum>
+												<minimum>0.7</minimum>
 											</limit>
 											<limit>
 												<counter>CLASS</counter>
@@ -201,8 +213,8 @@
 							</configuration>
 						</execution>
 						<execution>
-							<id>jacoco-site</id>
-							<phase>install</phase>
+							<id>jacoco-report</id>
+							<phase>test</phase>
 							<goals>
 								<goal>report</goal>
 							</goals>
@@ -240,10 +252,10 @@
 			<id>coverage</id>
 			<build>
 				<plugins>
-<!--					<plugin>-->
-<!--						<groupId>org.jacoco</groupId>-->
-<!--						<artifactId>jacoco-maven-plugin</artifactId>-->
-<!--					</plugin>-->
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>

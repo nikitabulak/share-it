@@ -17,7 +17,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 @Transactional
 @DataJpaTest
-//@AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext
 public class ItemRepositoryTest {

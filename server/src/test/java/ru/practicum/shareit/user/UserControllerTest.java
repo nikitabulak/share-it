@@ -54,7 +54,6 @@ public class UserControllerTest {
     void getUserById() throws Exception {
         when(userService.getUser(anyLong())).thenReturn(userDto);
         mvc.perform(get("/users/{userId}", String.valueOf(user.getId()))
-//                        .queryParam("userId", String.valueOf(user.getId()))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -72,10 +71,10 @@ public class UserControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
-//                .andExpect(jsonPath("$.name", is(userDto.getName())))
-//                .andExpect(jsonPath("$.email", is(userDto.getEmail())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(userDto.getName())))
+                .andExpect(jsonPath("$.email", is(userDto.getEmail())))
         ;
     }
 
@@ -83,7 +82,6 @@ public class UserControllerTest {
     void updateExistingUser() throws Exception {
         when(userService.updateUser(anyLong(), any())).thenReturn(userDto);
         mvc.perform(patch("/users/{userId}", String.valueOf(user.getId()))
-//                        .queryParam("userId", String.valueOf(user.getId()))
                         .content(mapper.writeValueAsString(userDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +95,6 @@ public class UserControllerTest {
     @Test
     void deleteExistingUser() throws Exception {
         mvc.perform(delete("/users/{userId}", String.valueOf(user.getId()))
-//                        .queryParam("userId", String.valueOf(user.getId()))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

@@ -40,12 +40,9 @@ public class ItemControllerTest {
     User userOwner = new User(1, "testOwnerName", "testOwnerEmail@yandex.ru");
     User userCommentator = new User(2, "testCommentatorName", "testCommentatorEmail@yandex.ru");
     Item item = new Item(1, "testName", "testDescription", true, userOwner, null);
-    //    Booking booking = new Booking(1, LocalDateTime.of(2023, Month.APRIL, 2, 12, 12, 12),
-//            LocalDateTime.of(2024, Month.APRIL, 2, 12, 12, 12), item, userBooker, Status.WAITING);
     Comment comment = new Comment(1, "testText", item, userCommentator, LocalDateTime.of(2020, Month.APRIL, 2, 12, 12, 12));
     CommentDto commentDto = CommentMapper.toCommentDto(comment);
     ItemDto itemDto = ItemMapper.toItemDto(item, List.of(commentDto));
-    //    ItemWithBookingDto itemWithBookingDto = ItemMapper.toItemWithBookingDto(item, booking, booking, List.of(commentDto))
     ItemWithBookingDto itemWithBookingDto = ItemMapper.toItemWithBookingDto(item, null, null, List.of(commentDto));
 
     @Test
@@ -65,7 +62,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.comments[0].id", is(commentDto.getId()), Long.class))
                 .andExpect(jsonPath("$.comments[0].text", is(commentDto.getText())))
                 .andExpect(jsonPath("$.comments[0].authorName", is(commentDto.getAuthorName())))
-//                .andExpect(jsonPath("$.comments[0].created", is(commentDto.getCreated().format(DateTimeFormatter.ofPattern("yyy-MM-dd-HH:mm:ss.SSSSSSS")))))
                 .andExpect(jsonPath("$.comments[0].created", is(commentDto.getCreated().withNano(0).toString())))
                 .andExpect(jsonPath("$.requestId", nullValue()));
     }
@@ -75,7 +71,6 @@ public class ItemControllerTest {
         when(itemService.updateItem(anyLong(), anyLong(), any())).thenReturn(itemDto);
         mvc.perform(patch("/items/{itemId}", String.valueOf(item.getId()))
                         .content(mapper.writeValueAsString(itemDto))
-//                        .queryParam("itemId", String.valueOf(item.getId()))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)
@@ -96,7 +91,6 @@ public class ItemControllerTest {
     void getItemById() throws Exception {
         when(itemService.getItem(anyLong(), anyLong())).thenReturn(itemWithBookingDto);
         mvc.perform(get("/items/{itemId}", String.valueOf(item.getId()))
-//                        .queryParam("itemId", String.valueOf(item.getId()))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)
@@ -159,7 +153,6 @@ public class ItemControllerTest {
     void saveNewComment() throws Exception {
         when(itemService.createComment(anyLong(), anyLong(), any())).thenReturn(commentDto);
         mvc.perform(post("/items/{itemId}/comment", String.valueOf(item.getId()))
-//                        .queryParam("itemId", String.valueOf(item.getId()))
                         .header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(comment))
                         .characterEncoding(StandardCharsets.UTF_8)

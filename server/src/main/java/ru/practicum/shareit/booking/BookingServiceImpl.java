@@ -54,7 +54,6 @@ public class BookingServiceImpl implements BookingService {
                         Status.WAITING)
         );
         return booking;
-//        return bookingRepository.save(booking);
     }
 
     @Override
@@ -90,7 +89,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBookings(long userId, String state, Pageable pageable) {
-        // Возможно заменить на if(userRepository.existsById(userId)){} else {new UserNotFoundException("Пользователь с таким id не найден!");}
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь с таким id не найден!"));
         try {
             switch (State.valueOf(state)) {

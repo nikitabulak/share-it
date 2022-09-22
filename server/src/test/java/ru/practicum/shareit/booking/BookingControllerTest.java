@@ -70,7 +70,6 @@ public class BookingControllerTest {
         when(bookingService.updateBooking(anyLong(), anyLong(), anyBoolean())).thenReturn(bookingApproved);
         mvc.perform(patch("/bookings/{bookingId}", String.valueOf(booking.getId()))
                         .param("approved", "true")
-//                        .queryParam("bookingId", String.valueOf(booking.getId()))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)

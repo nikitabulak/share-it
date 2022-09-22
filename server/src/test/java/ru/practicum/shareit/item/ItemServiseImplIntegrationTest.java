@@ -45,7 +45,6 @@ public class ItemServiseImplIntegrationTest {
                 .setParameter(3, true)
                 .setParameter(4, 1)
                 .executeUpdate();
-//        TypedQuery<Item> query = em.createQuery("insert into items (name, description, available) values (\"itemName2\", \"itemDescription2\", \"true\")", Item.class);
         User user = new User(1, "userName", "userEmail@mail.ru");
         ItemWithBookingDto itemWithBookingDto1 = ItemMapper.toItemWithBookingDto(
                 new Item(1, "itemName1", "itemDescription1", true, user, null),

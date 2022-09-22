@@ -35,12 +35,8 @@ public class ItemRequestControllerTest {
     private MockMvc mvc;
 
     User userRequestor = new User(1, "testRequestorName", "testRequestorEmail@yandex.ru");
-    User userOwner = new User(2, "testOwnerName", "testOwnerEmail@yandex.ru");
-    //    Item item = new Item(1, "testName", "testDescription", true, userOwner, null);
     ItemRequest itemRequest = new ItemRequest(1, "testDescription", userRequestor, LocalDateTime.of(2020, Month.APRIL, 2, 12, 12, 12));
     ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
-//    ItemRequestDto itemRequestDtoWithItems = ItemRequestMapper.toItemRequestDto(itemRequest);
-//        itemRequestDtoWithItems.setItems(List.of(item));
 
 
     @Test
@@ -93,7 +89,6 @@ public class ItemRequestControllerTest {
     void getItemRequestById() throws Exception {
         when(itemRequestService.getItemRequestById(anyLong(), anyLong())).thenReturn(itemRequestDto);
         mvc.perform(get("/requests/{requestId}", String.valueOf(itemRequest.getId()))
-//                        .queryParam("requestId", String.valueOf(itemRequest.getId()))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)
